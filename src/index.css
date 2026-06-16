@@ -337,52 +337,44 @@ button {
   border-radius: var(--radius-sm);
   border: 1px solid var(--gray-light);
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0.4rem;
+  justify-content: center;
+  align-items: center;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   background-color: var(--white);
   transition: var(--transition);
 }
 
-.calendar-day:not(.disabled) {
-  cursor: pointer;
-}
-
-.calendar-day.disabled {
+.calendar-day.past-date {
   background-color: #f7f7f7;
   color: #ccc;
   cursor: not-allowed;
   border-color: #eee;
 }
 
+.calendar-day.full-date {
+  background-color: #e2dbd5; /* little dark gray */
+  color: #8c827a;
+  cursor: not-allowed;
+  border-color: #d0c5bd;
+}
+
+.calendar-day.avail-date {
+  background-color: #e8f5e9; /* soft green background */
+  color: #2e7d32;
+  border-color: #c8e6c9;
+  cursor: pointer;
+}
+
+.calendar-day.avail-date:hover {
+  background-color: #c8e6c9;
+}
+
 .calendar-day.selected {
   border: 2px solid var(--primary) !important;
   box-shadow: 0 0 0 2px var(--primary-light);
-}
-
-.day-status {
-  font-size: 0.65rem;
-  font-weight: 500;
-  text-align: center;
-  padding: 1px 3px;
-  border-radius: 3px;
-}
-
-.status-available {
-  background-color: var(--success-light);
-  color: var(--success);
-}
-
-.status-full {
-  background-color: var(--danger-light);
-  color: var(--danger);
-}
-
-.status-limited {
-  background-color: var(--warning-light);
-  color: var(--warning);
+  background-color: #c8e6c9 !important;
+  color: #2e7d32 !important;
 }
 
 /* Slots Grid */

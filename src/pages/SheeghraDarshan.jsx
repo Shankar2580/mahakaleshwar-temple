@@ -203,13 +203,13 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                 <h3 style={{ fontSize: '1.15rem', fontFamily: 'var(--font-sans)', fontWeight: '700' }}>June 2026</h3>
                 <div style={{ display: 'flex', gap: '10px', fontSize: '0.75rem' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <span style={{ width: '10px', height: '10px', backgroundColor: 'var(--success-light)', border: '1px solid var(--success)', borderRadius: '2px' }}></span> Available
+                    <span style={{ width: '10px', height: '10px', backgroundColor: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '2px' }}></span> Available
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <span style={{ width: '10px', height: '10px', backgroundColor: 'var(--warning-light)', border: '1px solid var(--warning)', borderRadius: '2px' }}></span> Limited
+                    <span style={{ width: '10px', height: '10px', backgroundColor: '#e2dbd5', border: '1px solid #d0c5bd', borderRadius: '2px' }}></span> Full
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <span style={{ width: '10px', height: '10px', backgroundColor: 'var(--danger-light)', border: '1px solid var(--danger)', borderRadius: '2px' }}></span> Full
+                    <span style={{ width: '10px', height: '10px', backgroundColor: '#f7f7f7', border: '1px solid #eee', borderRadius: '2px' }}></span> Past Date
                   </span>
                 </div>
               </div>
@@ -219,32 +219,46 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                   <div key={day} className="calendar-day-header">{day}</div>
                 ))}
                 
-                {/* Pad grid: June 1st, 2026 is a Monday, so no empty pads needed. But our array starts on June 14 */}
+                {/* Pad grid: June 1st to June 13th, 2026 are all in the past */}
                 {Array.from({ length: 13 }).map((_, idx) => (
-                  <div key={`empty-${idx}`} className="calendar-day disabled">
-                    <span style={{ fontSize: '0.8rem', color: '#ccc' }}>{idx + 1}</span>
+                  <div key={`empty-${idx}`} className="calendar-day past-date">
+                    <span>{idx + 1}</span>
                   </div>
                 ))}
 
-                {getJune2026Dates().map((dateItem) => (
-                  <div 
-                    key={dateItem.dateStr}
-                    onClick={() => {
-                      if (dateItem.status !== 'full') {
-                        setSelectedDate(dateItem.dateStr);
-                        setSelectedSlot(''); // Reset slot selection when date changes
-                      }
-                    }}
-                    className={`calendar-day ${dateItem.status === 'full' ? 'disabled' : ''} ${selectedDate === dateItem.dateStr ? 'selected' : ''}`}
-                  >
-                    <span>{dateItem.dayNum}</span>
-                    <span className={`day-status ${
-                      dateItem.status === 'available' ? 'status-available' : (dateItem.status === 'limited' ? 'status-limited' : 'status-full')
-                    }`}>
-                      {dateItem.status === 'available' ? 'Avail' : (dateItem.status === 'limited' ? 'Limited' : 'Full')}
-                    </span>
-                  </div>
-                ))}
+                {getJune2026Dates().map((dateItem) => {
+                  const isPast = dateItem.dayNum < 15;
+                  const isFull = dateItem.status === 'full';
+                  const isSelected = selectedDate === dateItem.dateStr;
+
+                  let dayClass = 'calendar-day';
+                  if (isPast) {
+                    dayClass += ' past-date';
+                  } else if (isFull) {
+                    dayClass += ' full-date';
+                  } else {
+                    dayClass += ' avail-date';
+                  }
+
+                  if (isSelected) {
+                    dayClass += ' selected';
+                  }
+
+                  return (
+                    <div 
+                      key={dateItem.dateStr}
+                      onClick={() => {
+                        if (!isPast && !isFull) {
+                          setSelectedDate(dateItem.dateStr);
+                          setSelectedSlot(''); // Reset slot selection when date changes
+                        }
+                      }}
+                      className={dayClass}
+                    >
+                      <span>{dateItem.dayNum}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -420,50 +434,71 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
 
                     {visitor.idType === 'Aadhaar Card' ? (
                       /* Aadhaar DigiLocker Verification Button */
-                      <div>
+                      <div style={{
+                        border: '1px dashed var(--gray-medium)',
+                        borderRadius: '8px',
+                        padding: '0.75rem',
+                        backgroundColor: '#fafafa',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '92px',
+                        gap: '0.5rem'
+                      }}>
                         {visitor.isVerified ? (
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--success)', backgroundColor: 'var(--success-light)', padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid #c8e6c9', fontSize: '0.85rem', fontWeight: '700' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--success)', backgroundColor: 'var(--success-light)', padding: '0.4rem 0.8rem', borderRadius: '4px', border: '1px solid #c8e6c9', fontSize: '0.85rem', fontWeight: '700' }}>
                             ✓ Verified via DigiLocker
                           </div>
                         ) : (
-                          <button
-                            type="button"
-                            disabled={!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)}
-                            onClick={() => {
-                              const newVisitors = [...visitors];
-                              newVisitors[idx].isVerified = true;
-                              // Auto-fill visitor name if empty as verification response
-                              if (!newVisitors[idx].name) {
-                                newVisitors[idx].name = 'SHANKAR';
-                              }
-                              setVisitors(newVisitors);
-                            }}
-                            className="btn btn-outline"
-                            style={{ 
-                              display: 'inline-flex', 
-                              alignItems: 'center', 
-                              gap: '6px', 
-                              fontSize: '0.8rem', 
-                              borderColor: '#1e88e5', 
-                              color: '#1e88e5',
-                              padding: '0.5rem 0.8rem',
-                              opacity: (!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) ? 0.6 : 1,
-                              cursor: (!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) ? 'not-allowed' : 'pointer'
-                            }}
-                          >
-                            🔗 Verify Aadhaar with DigiLocker
-                          </button>
-                        )}
-                        {(!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) && (
-                          <span style={{ fontSize: '0.7rem', color: 'var(--danger)', display: 'block', marginTop: '0.35rem' }}>
-                            * Enter 12-digit Aadhaar number to verify with DigiLocker
-                          </span>
+                          <>
+                            <button
+                              type="button"
+                              disabled={!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)}
+                              onClick={() => {
+                                const newVisitors = [...visitors];
+                                newVisitors[idx].isVerified = true;
+                                if (!newVisitors[idx].name) {
+                                  newVisitors[idx].name = 'SHANKAR';
+                                }
+                                setVisitors(newVisitors);
+                              }}
+                              className="btn btn-outline"
+                              style={{ 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '6px', 
+                                fontSize: '0.8rem',
+                                padding: '0.45rem 0.9rem',
+                                opacity: (!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) ? 0.6 : 1,
+                                cursor: (!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) ? 'not-allowed' : 'pointer'
+                              }}
+                            >
+                              🔗 Verify with DigiLocker
+                            </button>
+                            {(!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) && (
+                              <span style={{ fontSize: '0.7rem', color: 'var(--danger)', textAlign: 'center' }}>
+                                * Enter 12-digit Aadhaar to verify
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
                     ) : (
                       /* Passport Gallery / Camera Upload */
-                      <div>
-                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div style={{
+                        border: '1px dashed var(--gray-medium)',
+                        borderRadius: '8px',
+                        padding: '0.75rem',
+                        backgroundColor: '#fafafa',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '92px',
+                        gap: '0.5rem'
+                      }}>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button
                             type="button"
                             onClick={() => {
@@ -471,7 +506,7 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                               if (fileInput) fileInput.click();
                             }}
                             className="btn btn-secondary"
-                            style={{ fontSize: '0.75rem', padding: '0.45rem 0.75rem' }}
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
                           >
                             📁 Gallery
                           </button>
@@ -481,29 +516,29 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                               const mockFile = `passport_scan_${visitor.name ? visitor.name.toLowerCase().replace(/\s+/g, '_') : `visitor_${idx+1}`}.jpg`;
                               handleVisitorChange(idx, 'idDocFile', mockFile);
                             }}
-                            className="btn btn-outline"
-                            style={{ fontSize: '0.75rem', padding: '0.45rem 0.75rem' }}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
                           >
                             📸 Camera
                           </button>
-                          <input 
-                            type="file" 
-                            id={`passport-file-${idx}`}
-                            accept="image/*,application/pdf"
-                            style={{ display: 'none' }}
-                            onChange={(e) => {
-                              if (e.target.files[0]) {
-                                handleVisitorChange(idx, 'idDocFile', e.target.files[0].name);
-                              }
-                            }}
-                          />
                         </div>
+                        <input 
+                          type="file" 
+                          id={`passport-file-${idx}`}
+                          accept="image/*,application/pdf"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            if (e.target.files[0]) {
+                              handleVisitorChange(idx, 'idDocFile', e.target.files[0].name);
+                            }
+                          }}
+                        />
                         {visitor.idDocFile ? (
-                          <div style={{ fontSize: '0.8rem', color: 'var(--success)', fontWeight: '600' }}>
-                            ✓ Passport: <span style={{ fontFamily: 'monospace', textDecoration: 'underline' }}>{visitor.idDocFile}</span>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--success)', fontWeight: '600', textAlign: 'center', wordBreak: 'break-all' }}>
+                            ✓ {visitor.idDocFile}
                           </div>
                         ) : (
-                          <span style={{ fontSize: '0.7rem', color: 'var(--danger)' }}>* Document upload is mandatory</span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--danger)' }}>* Document scan is mandatory</span>
                         )}
                       </div>
                     )}
@@ -514,29 +549,43 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                     <label className="form-label" style={{ fontWeight: '700', color: 'var(--dark)' }}>
                       Devotee Photo (Self Image)
                     </label>
-                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const fileInput = document.getElementById(`photo-file-${idx}`);
-                          if (fileInput) fileInput.click();
-                        }}
-                        className="btn btn-secondary"
-                        style={{ fontSize: '0.75rem', padding: '0.45rem 0.75rem' }}
-                      >
-                        📁 Gallery
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const mockPhoto = `photo_self_${visitor.name ? visitor.name.toLowerCase().replace(/\s+/g, '_') : `visitor_${idx+1}`}.jpg`;
-                          handleVisitorChange(idx, 'photoFile', mockPhoto);
-                        }}
-                        className="btn btn-outline"
-                        style={{ fontSize: '0.75rem', padding: '0.45rem 0.75rem' }}
-                      >
-                        📸 Camera
-                      </button>
+                    
+                    <div style={{
+                      border: '1px dashed var(--gray-medium)',
+                      borderRadius: '8px',
+                      padding: '0.75rem',
+                      backgroundColor: '#fafafa',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minHeight: '92px',
+                      gap: '0.5rem'
+                    }}>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const fileInput = document.getElementById(`photo-file-${idx}`);
+                            if (fileInput) fileInput.click();
+                          }}
+                          className="btn btn-secondary"
+                          style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
+                        >
+                          📁 Gallery
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const mockPhoto = `photo_self_${visitor.name ? visitor.name.toLowerCase().replace(/\s+/g, '_') : `visitor_${idx+1}`}.jpg`;
+                            handleVisitorChange(idx, 'photoFile', mockPhoto);
+                          }}
+                          className="btn btn-secondary"
+                          style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
+                        >
+                          📸 Camera
+                        </button>
+                      </div>
                       <input 
                         type="file" 
                         id={`photo-file-${idx}`}
@@ -548,26 +597,14 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                           }
                         }}
                       />
+                      {visitor.photoFile ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: 'var(--success)', fontWeight: '600', textAlign: 'center', wordBreak: 'break-all' }}>
+                          👤 ✓ {visitor.photoFile}
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: '0.7rem', color: 'var(--danger)' }}>* Devotee photo is mandatory</span>
+                      )}
                     </div>
-                    {visitor.photoFile ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--success)', fontWeight: '600' }}>
-                        <span style={{ 
-                          width: '20px', 
-                          height: '20px', 
-                          borderRadius: '50%', 
-                          backgroundColor: 'var(--primary-light)', 
-                          display: 'inline-flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          fontSize: '0.65rem'
-                        }}>
-                          👤
-                        </span>
-                        <span>✓ Photo: <span style={{ fontFamily: 'monospace' }}>{visitor.photoFile}</span></span>
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: '0.7rem', color: 'var(--danger)' }}>* Devotee photo is mandatory</span>
-                    )}
                   </div>
                 </div>
               </div>
