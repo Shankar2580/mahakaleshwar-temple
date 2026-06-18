@@ -424,34 +424,70 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                 </div>
 
                 {/* Identification Verification & Devotee Photo Upload */}
-                <div style={{ marginTop: '1.25rem', borderTop: '1px dashed var(--gray-medium)', paddingTop: '1.25rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
+                <div style={{ 
+                  marginTop: '1.5rem', 
+                  borderTop: '1px dashed var(--gray-medium)', 
+                  paddingTop: '1.5rem', 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                  gap: '1.5rem' 
+                }}>
                   
                   {/* Left Column: ID Document Validation */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label className="form-label" style={{ fontWeight: '700', color: 'var(--dark)' }}>
-                      ID Proof Verification
-                    </label>
+                  <div style={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid var(--gray-light)', 
+                    borderRadius: '10px', 
+                    padding: '1.25rem', 
+                    boxShadow: 'var(--shadow-sm)',
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '0.75rem' 
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--gray-light)', paddingBottom: '0.5rem' }}>
+                      <label className="form-label" style={{ fontWeight: '700', color: 'var(--dark)', marginBottom: 0 }}>
+                        ID Proof Verification
+                      </label>
+                    </div>
 
                     {visitor.idType === 'Aadhaar Card' ? (
                       /* Aadhaar DigiLocker Verification Button */
                       <div style={{
-                        border: '1px dashed var(--gray-medium)',
-                        borderRadius: '8px',
-                        padding: '0.75rem',
-                        backgroundColor: '#fafafa',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: '92px',
+                        padding: '0.75rem',
+                        backgroundColor: '#fafafa',
+                        borderRadius: '8px',
+                        border: '1px dashed var(--gray-medium)',
+                        minHeight: '110px',
                         gap: '0.5rem'
                       }}>
                         {visitor.isVerified ? (
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--success)', backgroundColor: 'var(--success-light)', padding: '0.4rem 0.8rem', borderRadius: '4px', border: '1px solid #c8e6c9', fontSize: '0.85rem', fontWeight: '700' }}>
-                            ✓ Verified via DigiLocker
+                          <div style={{ 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center', 
+                            gap: '6px', 
+                            color: 'var(--success)', 
+                            backgroundColor: 'var(--success-light)', 
+                            padding: '0.6rem 1rem', 
+                            borderRadius: '6px', 
+                            border: '1px solid #c8e6c9', 
+                            fontSize: '0.85rem', 
+                            fontWeight: '700',
+                            width: '100%',
+                            textAlign: 'center'
+                          }}>
+                            <span style={{ fontSize: '1.2rem' }}>✓</span>
+                            <span>Verified with DigiLocker</span>
                           </div>
                         ) : (
                           <>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--dark-gray)', textAlign: 'center', lineHeight: '1.3' }}>
+                              Instant secure authentication via Govt. DigiLocker database.
+                            </span>
                             <button
                               type="button"
                               disabled={!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)}
@@ -470,15 +506,17 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                                 gap: '6px', 
                                 fontSize: '0.8rem',
                                 padding: '0.45rem 0.9rem',
+                                color: '#1e88e5',
+                                borderColor: '#1e88e5',
                                 opacity: (!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) ? 0.6 : 1,
                                 cursor: (!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) ? 'not-allowed' : 'pointer'
                               }}
                             >
-                              🔗 Verify with DigiLocker
+                              🔗 Connect DigiLocker
                             </button>
                             {(!visitor.idNumber || visitor.idNumber.length !== 12 || !/^\d+$/.test(visitor.idNumber)) && (
                               <span style={{ fontSize: '0.7rem', color: 'var(--danger)', textAlign: 'center' }}>
-                                * Enter 12-digit Aadhaar to verify
+                                * Fill 12-digit Aadhaar to verify
                               </span>
                             )}
                           </>
@@ -487,17 +525,20 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                     ) : (
                       /* Passport Gallery / Camera Upload */
                       <div style={{
-                        border: '1px dashed var(--gray-medium)',
-                        borderRadius: '8px',
-                        padding: '0.75rem',
-                        backgroundColor: '#fafafa',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: '92px',
+                        padding: '0.75rem',
+                        backgroundColor: '#fafafa',
+                        borderRadius: '8px',
+                        border: '1px dashed var(--gray-medium)',
+                        minHeight: '110px',
                         gap: '0.5rem'
                       }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--dark-gray)', textAlign: 'center', marginBottom: '0.2rem' }}>
+                          Upload passport scan (JPG/PDF)
+                        </span>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button
                             type="button"
@@ -506,7 +547,7 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                               if (fileInput) fileInput.click();
                             }}
                             className="btn btn-secondary"
-                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', backgroundColor: '#eee' }}
                           >
                             📁 Gallery
                           </button>
@@ -517,7 +558,7 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                               handleVisitorChange(idx, 'idDocFile', mockFile);
                             }}
                             className="btn btn-secondary"
-                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', backgroundColor: '#eee' }}
                           >
                             📸 Camera
                           </button>
@@ -545,65 +586,123 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                   </div>
 
                   {/* Right Column: Compulsory Face Photo Upload */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label className="form-label" style={{ fontWeight: '700', color: 'var(--dark)' }}>
-                      Devotee Photo (Self Image)
-                    </label>
+                  <div style={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid var(--gray-light)', 
+                    borderRadius: '10px', 
+                    padding: '1.25rem', 
+                    boxShadow: 'var(--shadow-sm)',
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '0.75rem' 
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--gray-light)', paddingBottom: '0.5rem' }}>
+                      <label className="form-label" style={{ fontWeight: '700', color: 'var(--dark)', marginBottom: 0 }}>
+                        Biometric Face Enrolment
+                      </label>
+                    </div>
                     
                     <div style={{
-                      border: '1px dashed var(--gray-medium)',
-                      borderRadius: '8px',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
                       padding: '0.75rem',
                       backgroundColor: '#fafafa',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minHeight: '92px',
-                      gap: '0.5rem'
+                      borderRadius: '8px',
+                      border: '1px dashed var(--gray-medium)',
+                      minHeight: '110px',
+                      gap: '0.75rem'
                     }}>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const fileInput = document.getElementById(`photo-file-${idx}`);
-                            if (fileInput) fileInput.click();
-                          }}
-                          className="btn btn-secondary"
-                          style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
-                        >
-                          📁 Gallery
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const mockPhoto = `photo_self_${visitor.name ? visitor.name.toLowerCase().replace(/\s+/g, '_') : `visitor_${idx+1}`}.jpg`;
-                            handleVisitorChange(idx, 'photoFile', mockPhoto);
-                          }}
-                          className="btn btn-secondary"
-                          style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
-                        >
-                          📸 Camera
-                        </button>
+                      {/* Biometric circle frame */}
+                      <div style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '50%',
+                        border: visitor.photoFile ? '2px solid var(--success)' : '2px dashed var(--secondary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#fff',
+                        flexShrink: 0,
+                        position: 'relative',
+                        boxShadow: visitor.photoFile ? '0 0 8px rgba(46, 125, 50, 0.2)' : 'none'
+                      }}>
+                        {visitor.photoFile ? (
+                          <span style={{ fontSize: '1.5rem' }}>👤</span>
+                        ) : (
+                          <span style={{ fontSize: '1.2rem', color: 'var(--secondary)' }}>👤</span>
+                        )}
+                        {/* Mock Scan Overlay Indicator */}
+                        {visitor.photoFile && (
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '-2px',
+                            right: '-2px',
+                            backgroundColor: 'var(--success)',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: '16px',
+                            height: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.6rem',
+                            fontWeight: 'bold'
+                          }}>
+                            ✓
+                          </div>
+                        )}
                       </div>
-                      <input 
-                        type="file" 
-                        id={`photo-file-${idx}`}
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={(e) => {
-                          if (e.target.files[0]) {
-                            handleVisitorChange(idx, 'photoFile', e.target.files[0].name);
-                          }
-                        }}
-                      />
-                      {visitor.photoFile ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: 'var(--success)', fontWeight: '600', textAlign: 'center', wordBreak: 'break-all' }}>
-                          👤 ✓ {visitor.photoFile}
+
+                      {/* Info & Upload controls */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexGrow: 1 }}>
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const fileInput = document.getElementById(`photo-file-${idx}`);
+                              if (fileInput) fileInput.click();
+                            }}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem', backgroundColor: '#eee' }}
+                          >
+                            📁 Gallery
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const mockPhoto = `photo_self_${visitor.name ? visitor.name.toLowerCase().replace(/\s+/g, '_') : `visitor_${idx+1}`}.jpg`;
+                              handleVisitorChange(idx, 'photoFile', mockPhoto);
+                            }}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem', backgroundColor: '#eee' }}
+                          >
+                            📸 Camera
+                          </button>
                         </div>
-                      ) : (
-                        <span style={{ fontSize: '0.7rem', color: 'var(--danger)' }}>* Devotee photo is mandatory</span>
-                      )}
+                        <input 
+                          type="file" 
+                          id={`photo-file-${idx}`}
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            if (e.target.files[0]) {
+                              handleVisitorChange(idx, 'photoFile', e.target.files[0].name);
+                            }
+                          }}
+                        />
+                        {visitor.photoFile ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--success)', fontWeight: '700' }}>✓ Biometric Photo Ready</span>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--dark-gray)', fontFamily: 'monospace', wordBreak: 'break-all' }}>{visitor.photoFile}</span>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--danger)', fontWeight: '600' }}>* Photo is required to enter in Mahakaleshwar</span>
+                            <span style={{ fontSize: '0.65rem', color: '#888', lineHeight: '1.2' }}>Must look straight, good light, no glasses</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
