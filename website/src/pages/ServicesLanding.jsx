@@ -12,12 +12,12 @@ export default function ServicesLanding({ user, onOpenLogin, setActivePage, setS
         const types = await api.bookingTypes();
         
         const orderMap = {
-          'BHASMA_AARTI': { rank: 1, label: 'Bhasma Aarti' },
-          'BHASMA_TATKAL': { rank: 2, label: 'Bhasma Aarti — Tatkal' },
-          'VIP_DARSHAN': { rank: 3, label: 'Shighra Darshan (₹250)' },
-          'SHAYAN_AARTI': { rank: 4, label: 'Shayan Aarti (Night)' },
-          'SANDHYA_AARTI': { rank: 5, label: 'Sandhya Aarti (Evening)' },
-          'PROTOCOL': { rank: 6, label: 'Protocol / Govt-VIP' }
+          'BHASMA_AARTI': { rank: 1, label: 'Bhasma Aarti', desc: 'Advance booking for 4 AM ritual' },
+          'BHASMA_TATKAL': { rank: 2, label: 'Bhasma Aarti — Tatkal', desc: 'Same-day quota for 4 AM ritual' },
+          'VIP_DARSHAN': { rank: 3, label: 'Shighra Darshan (₹250)', desc: 'Fast-track queue for quick darshan' },
+          'SHAYAN_AARTI': { rank: 4, label: 'Shayan Aarti (Night)', desc: 'Last darshan before temple closing' },
+          'SANDHYA_AARTI': { rank: 5, label: 'Sandhya Aarti (Evening)', desc: 'Evening aarti seating pass' },
+          'PROTOCOL': { rank: 6, label: 'Protocol / Govt-VIP', desc: 'VIP entry with reference letter' }
         };
 
         // Map backend types to standard cards with sorting and filtering
@@ -28,7 +28,7 @@ export default function ServicesLanding({ user, onOpenLogin, setActivePage, setS
             id: t.code,
             isDarshan: true,
             title: orderMap[t.code]?.label || t.label,
-            description: t.note || 'Book your darshan slot.',
+            description: orderMap[t.code]?.desc || 'Book your darshan slot.',
             price: t.price ? `₹ ${t.price} / Person` : 'Free / Allocation',
             actionText: 'Book Now',
             icon: <Calendar size={24} style={{ color: 'var(--primary)' }} />,
