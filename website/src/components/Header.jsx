@@ -49,21 +49,7 @@ export default function Header({ user, onLogout, onOpenLogin, activePage, setAct
           
           {user ? (
             <>
-              <button 
-                onClick={() => setActivePage('history')}
-                style={{ 
-                  background: 'none', 
-                  border: 'none', 
-                  color: activePage === 'history' ? '#e5a93b' : '#ffffff', 
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  fontSize: '0.95rem'
-                }}
-              >
-                <Calendar size={16} /> My Bookings
-              </button>
+
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', borderLeft: '1px solid #ffffff33', paddingLeft: '1rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
