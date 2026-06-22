@@ -271,7 +271,7 @@ const BLANK_VISITOR = () => ({
   selfieBlob: null, selfiePreview: null, consent_given: true,
 });
 
-export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
+export default function SheeghraDarshan({ user, onAddBooking, setActivePage, initialDarshanType }) {
   const [step, setStep] = useState(1);
 
   const now = new Date();
@@ -308,19 +308,16 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
         setTypeError('');
         const allTypes = await api.bookingTypes();
 
-        // Exclude types that have their own dedicated pages on the home screen
-        // (Bhasma Aarti, Garbha Griha — these are separate cards in ServicesLanding)
-        const EXCLUDE = ['BHASMA', 'BHASMA_AARTI', 'GARBH', 'GARBHA', 'PUJAN'];
-        const filtered = allTypes.filter(t =>
-          !EXCLUDE.some(ex => t.code.toUpperCase().includes(ex))
-        );
+        const filtered = allTypes;
 
         setBookingTypes(filtered);
 
-        // Auto-select if only one type (or fall back to first)
-        if (filtered.length === 1) {
-          setSelectedType(filtered[0]);
-        } else if (filtered.length > 1) {
+        // Auto-select based on initialDarshanType or fall back to first
+        if (initialDarshanType) {
+          const match = filtered.find(t => t.code === initialDarshanType);
+          if (match) setSelectedType(match);
+          else if (filtered.length > 0) setSelectedType(filtered[0]);
+        } else if (filtered.length > 0) {
           setSelectedType(filtered[0]);
         }
       } catch (e) {
@@ -619,12 +616,9 @@ export default function SheeghraDarshan({ user, onAddBooking, setActivePage }) {
                       className={dayClass}
                       onClick={() => { if (!isPast) { setSelectedDate(dateStr); setSelectedSlot(null); } }}
                       title={isPast ? 'Past date' : fmt(dateStr)}>
-                      <span style={{ fontWeight: isToday ? '800' : undefined, color: isToday && !isSelected ? 'var(--primary)' : undefined }}>
+                      <span style={{ fontWeight: isToday ? '800' : 'inherit' }}>
                         {dayNum}
                       </span>
-                      {isToday && !isSelected && (
-                        <span style={{ display: 'block', width: 4, height: 4, borderRadius: '50%', backgroundColor: 'var(--primary)', margin: '1px auto 0' }}></span>
-                      )}
                     </div>
                   );
                 })}

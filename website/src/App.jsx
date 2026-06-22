@@ -10,6 +10,7 @@ import History from './pages/History';
 
 export default function App() {
   const [activePage, setActivePage] = useState('services');
+  const [selectedDarshanType, setSelectedDarshanType] = useState(null);
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -61,6 +62,7 @@ export default function App() {
             user={user}
             onOpenLogin={() => setIsLoginModalOpen(true)}
             setActivePage={setActivePage}
+            setSelectedDarshanType={setSelectedDarshanType}
           />
         )}
 
@@ -69,6 +71,7 @@ export default function App() {
             user={user}
             onAddBooking={handleAddBooking}
             setActivePage={setActivePage}
+            initialDarshanType={selectedDarshanType}
           />
         )}
 
